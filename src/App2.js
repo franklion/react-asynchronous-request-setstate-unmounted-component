@@ -3,7 +3,7 @@ import axios from 'axios';
 
 /*
  *
- * [方法二] 使用 flag 控制元件是否 mounted
+ * [方法二] 使用 flag 來紀錄元件是否 mounted，更新狀態前進行判斷
  *
  */
 const News = () => {
