@@ -3,22 +3,22 @@ import axios from 'axios';
 
 /*
  *
- * [方法一] 使用 axios cancelToken 來取消請求
+ * [方法二] 使用 flag 控制元件是否 mounted
  *
  */
 const News = () => {
   const [news, setNews] = useState([]);
-  const sourceRef = useRef(axios.CancelToken.source());
-
-  console.log('sourceRef', sourceRef);
+  const isMountedRef = useRef(false);
 
   useEffect(() => {
+    isMountedRef.current = true;
+
     axios
-      .get('https://hn.algolia.com/api/v1/search?query=react', {
-        cancelToken: sourceRef.current.token,
-      })
+      .get('https://hn.algolia.com/api/v1/search?query=react')
       .then((result) => {
-        setNews(result.data.hits);
+        if (isMountedRef.current) {
+          setNews(result.data.hits);
+        }
       })
       .catch((error) => {
         if (axios.isCancel(error)) {
@@ -29,9 +29,7 @@ const News = () => {
       });
 
     return () => {
-      sourceRef.current.cancel(
-        'Operation canceled due to new request.',
-      );
+      isMountedRef.current = false;
     };
   }, []);
 
